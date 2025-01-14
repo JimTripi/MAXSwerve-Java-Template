@@ -51,7 +51,7 @@ public class DriveSubsystem extends SubsystemBase {
   // Odometry class for tracking robot pose
   SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
       DriveConstants.kDriveKinematics,
-      Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()),
+      Rotation2d.fromDegrees(getAzimuth()),
       new SwerveModulePosition[] {
           m_frontLeft.getPosition(),
           m_frontRight.getPosition(),
@@ -69,7 +69,7 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     // Update the odometry in the periodic block
     m_odometry.update(
-        Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()),
+        Rotation2d.fromDegrees(getAzimuth()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -94,7 +94,7 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(
-        Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()),
+        Rotation2d.fromDegrees(getAzimuth()),
         new SwerveModulePosition[] {
             m_frontLeft.getPosition(),
             m_frontRight.getPosition(),
@@ -122,7 +122,7 @@ public class DriveSubsystem extends SubsystemBase {
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()))
+                Rotation2d.fromDegrees(getAzimuth()))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -175,7 +175,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return Rotation2d.fromDegrees(pigeon.getYaw().getValueAsDouble()).getDegrees();
+    return Rotation2d.fromDegrees(getAzimuth()).getDegrees();
   }
 
   /**
@@ -185,5 +185,9 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getTurnRate() {
     return pigeon.getAngularVelocityZDevice().getValueAsDouble() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  }
+
+  public double getAzimuth() { 
+    return pigeon.getYaw().getValueAsDouble();
   }
 }
