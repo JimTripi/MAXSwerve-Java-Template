@@ -1,6 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// Open Source Software; you can modify and/or share it under the terms of the
+// WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
 
@@ -46,20 +46,16 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    //m_robotDrive.setDefaultCommand(new DelayCommand(1.0));  //This is crashing here?!?
-
-    //m_robotDrive.setDefaultCommand(null);
-
-    //Configure default commands
+    // Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                true),
+                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband) ,
+                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband) ,
+                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband) ,
+                false), // Set to true for field-relative driving
             m_robotDrive));
   }
 
@@ -123,5 +119,9 @@ public class RobotContainer {
 
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+  }
+
+  public DriveSubsystem getDriveSubsystem() {
+    return m_robotDrive;
   }
 }

@@ -1,6 +1,6 @@
 // Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+// Open Source Software; you can modify and/or share it under the terms of the
+// WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
 
@@ -119,13 +119,21 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedDelivered = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
 
+    System.out.println("Joystick Inputs - xSpeed: " + xSpeed + ", ySpeed: " + ySpeed + ", rot: " + rot);
+    System.out.println("Delivered Speeds - xSpeedDelivered: " + xSpeedDelivered + ", ySpeedDelivered: " + ySpeedDelivered + ", rotDelivered: " + rotDelivered);
+
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
         fieldRelative
             ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                Rotation2d.fromDegrees(getAzimuth()))
+                Rotation2d.fromDegrees(getHeading()))
             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
     SwerveDriveKinematics.desaturateWheelSpeeds(
         swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
+
+    for (int i = 0; i < swerveModuleStates.length; i++) {
+        System.out.println("Swerve Module State " + i + " - Speed: " + swerveModuleStates[i].speedMetersPerSecond + ", Angle: " + swerveModuleStates[i].angle.getDegrees());
+    }
+
     m_frontLeft.setDesiredState(swerveModuleStates[0]);
     m_frontRight.setDesiredState(swerveModuleStates[1]);
     m_rearLeft.setDesiredState(swerveModuleStates[2]);
@@ -154,6 +162,14 @@ public class DriveSubsystem extends SubsystemBase {
     m_frontRight.setDesiredState(desiredStates[1]);
     m_rearLeft.setDesiredState(desiredStates[2]);
     m_rearRight.setDesiredState(desiredStates[3]);
+  }
+
+  /** Sets the initial desired state of the swerve modules to zero speed and current angle. */
+  public void setInitialDesiredState() {
+    m_frontLeft.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(m_frontLeft.getPosition().angle.getRadians())));
+    m_frontRight.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(m_frontRight.getPosition().angle.getRadians())));
+    m_rearLeft.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(m_rearLeft.getPosition().angle.getRadians())));
+    m_rearRight.setDesiredState(new SwerveModuleState(0.0, new Rotation2d(m_rearRight.getPosition().angle.getRadians())));
   }
 
   /** Resets the drive encoders to currently read a position of 0. */
